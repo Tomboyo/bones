@@ -20,14 +20,20 @@ case $1 in
     mv $SOURCE $DEST
     ln -s $DEST $SOURCE
     ;;
-  backup)
+  synch)
     FROM=$RSYNC_DIR
     TO="/run/media/tomboyo/Bones/backups/rsync"
-    read -p "Backing up $FROM to $TO, is that correct? [y/N]" -n 1 -r
+    echo "WARNING"
+    echo "Synchronization will delete files from the backup if they were "
+    echo "removed since the last synchronization. If you incompletely"
+    echo "recover your drive and then run synch, files may be peremenantly"
+    echo "lost."
+    echo
+    read -p "Synchronizing $FROM with $TO. Do you wish to proceed? [y/N]" -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]] ; then
-      rsync --archive $FROM $TO
+      rsync --archive --delete $FROM $TO
     fi
     ;;
   *)
