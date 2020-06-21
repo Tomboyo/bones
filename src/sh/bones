@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -eo pipefail
+
+SOURCE_DIR="/home/tomboyo"
+RSYNC_DIR="/home/tomboyo.rsync"
+
+case $1 in
+  add)
+    SOURCE=$(realpath "${2:?usage: backups add <file>}")
+    
+    BASE="$SOURCE_DIR/"
+    if [[ $SOURCE != $BASE* ]] ; then
+      echo "Cannot backup $SOURCE because it is not in $BASE."
+      exit 1
+    fi
+    
+    DEST="$RSYNC_DIR/${SOURCE#$BASE}"
+    mkdir -p $(dirname $DEST)
+    mv $SOURCE $DEST
+    ln -s $DEST $SOURCE
+    ;;
+  backup)
+    FROM=$RSYNC_DIR
+    TO="/run/media/tomboyo/Bones/backups/rsync"
+    read -p "Backing up $FROM to $TO, is that correct? [y/N]" -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]] ; then
+      rsync --archive $FROM $TO
+    fi
+    ;;
+  *)
+    echo "Unknown command $1"
+    exit 1
+    ;;
+esac
