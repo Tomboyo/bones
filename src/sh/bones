@@ -17,13 +17,29 @@ function validate {
     exit 1
   fi
 
+  if [ ! -d $BONES_SOURCE_DIR ] ; then
+    >&2 echo "BONES_SOURCE_DIR '$BONES_SOURCE_DIR' does not exist."
+    exit 1
+  fi
+
   if [ "$BONES_RSYNC_DIR" == "" ] ; then
     >&2 echo "BONES_RSYNC_DIR is missing."
     exit 1
   fi
 
+  if [ ! -d $BONES_RSYNC_DIR ] ; then
+    >&2 echo "BONES_RSYNC_DIR '$BONES_RSYNC_DIR' does not exist."
+    exit 1
+  fi
+
   if [ "$BONES_BACKUP_DIR" == "" ] ; then
     >&2 echo "BONES_BACKUP_DIR is missing."
+    exit 1
+  fi
+
+  if [ ! -d $BONES_BACKUP_DIR ] ; then
+    >&2 echo "BONES_BACKUP_DIR '$BONES_BACKUP_DIR' does not exist."
+    >&2 echo "(Did you plug in your external drive?)"
     exit 1
   fi
 }
@@ -36,7 +52,7 @@ function add_source {
     >&2 echo "Cannot backup $source because it is not in $base."
     exit 1
   fi
-    
+  
   local dest="$BONES_RSYNC_DIR/${source#$base}"
   mkdir -p $(dirname $dest)
   mv $source $dest
@@ -87,10 +103,10 @@ validate
 
 case $1 in
   "add")
-    # add_source $2
+    add_source $2
     ;;
   "synch")
-    # synch
+    synch
     ;;
   "help")
     usage
