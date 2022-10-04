@@ -59,7 +59,7 @@ function add_source {
   ln -s $dest $source
 }
 
-function synch {
+function sync {
   local from=$BONES_RSYNC_DIR
   local to=$BONES_BACKUP_DIR
   echo "WARNING"
@@ -87,12 +87,16 @@ function usage {
   echo "      symlink to that file. Only files in BONES_SOURCE_DIR may be"
   echo "      added."
   echo ""
+  echo "  sync"
   echo "  synch"
   echo "      Synchronize all added files with the BONES_BACKUP_DIR. This is a"
   echo "      destructive operation; it will delete all files which were removed"
   echo "      from BONES_SOURCE_DIR since the last sync. If you incompletely"
   echo "      recover your drive and then run sync, files may be permenantly"
   echo "      lost."
+  echo ""
+  echo "      This will create a new folder in the BONES_BACKUP_DIR with the"
+  echo "      same name as BONES_RSYNC_DIR."
   echo ""
   echo "  help"
   echo "      Show this message."
@@ -105,8 +109,8 @@ case $1 in
   "add")
     add_source $2
     ;;
-  "synch")
-    synch
+  "sync"|"synch")
+    sync
     ;;
   "help")
     usage
